@@ -5,6 +5,7 @@ public class CameraMove : MonoBehaviour {
     private float maxSpeed =5;
     private float acceleration =5 ;
     private float fallspeed = 1f;
+    private float gravity = -200f;
     public Vector3 velocity;
     private bool left ;
     private bool right;
@@ -24,10 +25,13 @@ public class CameraMove : MonoBehaviour {
     //public Vector2 sensitivity = new Vector2(2, 2);
     public Vector2 smoothing = new Vector2(3, 3);
     public Vector2 targetDirection;
+
+
+    Rigidbody myRigid;
    
     // Use this for initialization
     void Start () {
-
+        Physics.gravity = new Vector3(0, gravity, 0);
         velocity = Vector3.zero;
         left = false;
         right = false;
@@ -36,6 +40,7 @@ public class CameraMove : MonoBehaviour {
         mouseHeld = false;
         // Set target direction to the camera's initial orientation.
         targetDirection = transform.localRotation.eulerAngles;
+        myRigid = gameObject.GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -157,23 +162,26 @@ public class CameraMove : MonoBehaviour {
         }
 
         // move the camera in the diurection its facing 
+        
         float hold = transform.position.y;
        
         Quaternion holdq = transform.localRotation;
         Quaternion holdqa = holdq;
+        Vector3 hold2= Vector3.zero;
         holdq.x = 0;
         transform.localRotation = holdq;
 
-        transform.position += transform.forward * velocity.x;       
-        transform.position += transform.right * velocity.z;
+        hold2 += transform.forward * velocity.x;
+        hold2 += transform.right * velocity.z;
 
         transform.localRotation = holdqa;
 
-        Vector3 hold1 = transform.position;          
-        hold1.y = hold + -velocity.y;
-       transform.position = hold1;
-        //theCamera.transform.position +=  velocity;
+       // hold2.y = myRigid.velocity.y;
 
+       // hold2.y =  -velocity.y;
+
+
+        myRigid.velocity = hold2 *20; 
 
     }
 
@@ -199,11 +207,15 @@ public class CameraMove : MonoBehaviour {
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bounce")
-        {
-            velocity.y = -fallspeed;
+        {           
+            myRigid.AddRelativeForce(-Physics.gravity*10,ForceMode.Force);
+
+            //velocity.y = -fallspeed;
             KillEnemy(other);
         }
+       
     }
+   
 
     void KillEnemy(Collider other)
     {
