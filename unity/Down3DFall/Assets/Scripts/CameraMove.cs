@@ -1,19 +1,28 @@
 ﻿using UnityEngine;
-using System.Collections;
+using System.Collections.Generic;
 
 public class CameraMove : MonoBehaviour {
-    private float maxSpeed =5;
-    private float acceleration =5 ;
-    private float fallspeed = 1f;
-    private float gravity = -200f;
+
+
+    private  float maxSpeed =2;
+    private  float acceleration =5 ;
+    private const float fallspeed = 1f;
+    private const float gravity = -100f;
+    private const float bulletTime = 0.05f;
+    private float lastBullettime =0.0f;
     public Vector3 velocity;
     private bool left ;
     private bool right;
     private bool forward;
     private bool back;
     private bool mouseHeld;
-    
-    private float speedChange =10;
+
+    private List<GameObject> bullets = new List<GameObject>();
+
+
+
+
+    private const float speedChange =10;
     public bool fall = true;
 
 
@@ -21,7 +30,7 @@ public class CameraMove : MonoBehaviour {
     Vector2 _smoothMouse;
 
     public Vector2 clampInDegrees = new Vector2(360, 180);
-    public bool lockCursor;
+    private bool lockCursor;
     //public Vector2 sensitivity = new Vector2(2, 2);
     public Vector2 smoothing = new Vector2(3, 3);
     public Vector2 targetDirection;
@@ -46,10 +55,26 @@ public class CameraMove : MonoBehaviour {
     // Update is called once per frame
     void Update () {
 
-        CheckButton();       
-        
+        CheckButton();
+
+        moveCamera();
         // if you hold the mous rotate the camera
-        if (mouseHeld)
+        moveDirection();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Shoot();
+
+        }
+
+
+        //myRigid.AddRelativeForce(hold2);
+    }
+
+
+    void moveCamera()
+    {
+        if (mouseHeld|| lockCursor)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
@@ -75,7 +100,7 @@ public class CameraMove : MonoBehaviour {
                 _mouseAbsolute.x = Mathf.Clamp(_mouseAbsolute.x, -clampInDegrees.x * 0.5f, clampInDegrees.x * 0.5f);
 
             var xRotation = Quaternion.AngleAxis(-_mouseAbsolute.y, targetOrientation * Vector3.right);
-           transform.localRotation = xRotation;
+            transform.localRotation = xRotation;
 
             // Then clamp and apply the global y value.
             if (clampInDegrees.y < 360)
@@ -93,6 +118,13 @@ public class CameraMove : MonoBehaviour {
 
         }
 
+
+
+    }
+
+    void moveDirection()
+    {
+
         if (forward && velocity.x < maxSpeed)
         {
             velocity.x += acceleration * Time.deltaTime;
@@ -100,7 +132,7 @@ public class CameraMove : MonoBehaviour {
         }
         else if (!forward && velocity.x > 0)
         {
-            velocity.x -= (acceleration + velocity.x ) * Time.deltaTime;
+            velocity.x -= (acceleration + velocity.x) * Time.deltaTime;
             //Debug.Log("13");
         }
 
@@ -114,7 +146,7 @@ public class CameraMove : MonoBehaviour {
         else if (!back && velocity.x < 0)
         {
             //Debug.Log("11");
-            velocity.x += (acceleration - velocity.x ) * Time.deltaTime;
+            velocity.x += (acceleration - velocity.x) * Time.deltaTime;
         }
 
         if (left && velocity.z > -maxSpeed)
@@ -123,7 +155,7 @@ public class CameraMove : MonoBehaviour {
         }
         else if (!left && velocity.z < 0)
         {
-            velocity.z += (acceleration - velocity.z ) * Time.deltaTime;
+            velocity.z += (acceleration - velocity.z) * Time.deltaTime;
 
         }
         if (right && velocity.z < maxSpeed)
@@ -132,12 +164,12 @@ public class CameraMove : MonoBehaviour {
         }
         else if (!right && velocity.z > 0)
         {
-            velocity.z -= (acceleration +velocity.z )* Time.deltaTime ;
+            velocity.z -= (acceleration + velocity.z) * Time.deltaTime;
 
         }
 
 
-        if(velocity.z < acceleration / 100 && velocity.z > -acceleration / 100)
+        if (velocity.z < acceleration / 100 && velocity.z > -acceleration / 100)
         {
 
             velocity.z = 0;
@@ -151,23 +183,23 @@ public class CameraMove : MonoBehaviour {
 
         if (fall)
         {
-           if(velocity.y >=fallspeed)
+            if (velocity.y >= fallspeed)
             {
                 velocity.y = fallspeed;
             }
             else
             {
-                velocity.y += fallspeed *Time.deltaTime;
+                velocity.y += fallspeed * Time.deltaTime;
             }
         }
 
         // move the camera in the diurection its facing 
-        
+
         float hold = transform.position.y;
-       
+
         Quaternion holdq = transform.localRotation;
         Quaternion holdqa = holdq;
-        Vector3 hold2= Vector3.zero;
+        Vector3 hold2 = Vector3.zero;
         holdq.x = 0;
         transform.localRotation = holdq;
 
@@ -176,64 +208,76 @@ public class CameraMove : MonoBehaviour {
 
         transform.localRotation = holdqa;
 
-       // hold2.y = myRigid.velocity.y;
-
-       // hold2.y =  -velocity.y;
 
 
-        myRigid.velocity = hold2 *20; 
+        hold2 *= 20;
+        hold2.y = myRigid.velocity.y;
 
-    }
-
-    public void DecreaseSpeed()
-    {
-        maxSpeed /= speedChange;
-        acceleration /= speedChange;
-
-        //gameObject.GetComponent<SphereCollider>().radius /= speedChange;
-        if (velocity.x> maxSpeed)
+        if (hold2.y < -100)
         {
-            velocity.x = maxSpeed;
+
+            hold2.y = -100;
+
         }
-        if (velocity.z > maxSpeed)
+        if (hold2.y > 100)
         {
-            velocity.z = maxSpeed;
+            hold2.y = 100;
         }
 
 
+        // hold2.y = myRigid.velocity.y;
 
+        // hold2.y =  -velocity.y;
+
+
+        myRigid.velocity = hold2;
+        //Debug.Log(myRigid.velocity);
     }
+
+
+
+
+
+   
 
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bounce")
-        {           
-            myRigid.AddRelativeForce(-Physics.gravity*10,ForceMode.Force);
-
+        {
+             //myRigid.AddRelativeForce(-Physics.gravity,ForceMode.Acceleration);
+            myRigid.velocity += new Vector3(0,200,0);
             //velocity.y = -fallspeed;
-            KillEnemy(other);
+            DmgEnemy(other);
+           // Debug.Log(myRigid.velocity);
         }
        
     }
    
-
-    void KillEnemy(Collider other)
+    void Shoot()
     {
-        KillEnemy(other.gameObject);
+        if(Time.time -lastBullettime > bulletTime)
+        {
+            Debug.Log("sdhhot");
+            GameObject bullet = Instantiate(Resources.Load("Bullet", typeof(GameObject))) as GameObject;
+            bullet.transform.position = transform.position;
+            bullet.GetComponent<Rigidbody>().velocity =transform.forward*100;
+            bullets.Add(bullet);
+
+        }
 
 
     }
 
-    void KillEnemy(GameObject enemy)
+
+    void DmgEnemy(Collider other)
     {
-        Destroy(enemy);
-
-
+        other.GetComponent<Enemy>().takeDmg(100);
     }
+
+    
 
     public void IncreaseSpeed()
     {
-
         maxSpeed *= speedChange;
         acceleration *= speedChange;
         //gameObject.GetComponent<SphereCollider>().radius *= speedChange;

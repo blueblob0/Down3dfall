@@ -3,13 +3,21 @@ using System.Collections;
 
 public class Enemy : MonoBehaviour {
     int speed = 100;
+    protected float health;
+
     bool huntPlayer;
     Transform player;
     Rigidbody enemyRig;
-    float stopdis = 0.01f;
-	// Use this for initialization
-	void Start () {
+    Material mymat;
+    float stopDis = 0.01f;
+    float hitTime = -10; //Time last hit;
+    float hitDiff = 0.5f;
+    	// Use this for initialization
+	protected virtual void Start ()
+    {
         enemyRig = gameObject.GetComponent<Rigidbody>();
+        mymat = gameObject.GetComponent<Renderer>().material;
+        mymat.color = Color.white;
     }
 	
 	// Update is called once per frame
@@ -21,21 +29,54 @@ public class Enemy : MonoBehaviour {
             //enemyRig.MovePosition(player.position* Time.deltaTime);
 
             var direction = Vector3.zero;
-            if (Vector3.Distance(transform.position, player.position) > stopdis)
+            if (Vector3.Distance(transform.position, player.position) > stopDis)
             {
                 direction = player.position - transform.position;
                 enemyRig.AddRelativeForce(direction.normalized * speed, ForceMode.Force);
             }
         }
+
+
+        if(Time.time -hitTime >hitDiff)
+        {
+            mymat.color = Color.white;
+
+        }
+
 	}
+
+    /// <summary>
+    /// The amount of dmg to take
+    /// </summary>
+    public void takeDmg(int amount)
+    {
+        health -= amount;
+        if(health <= 0)
+        {
+            Destroy(gameObject); 
+        }
+
+
+
+    } 
+
+
 
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Player")
         {
-            Debug.Log("fdgdfg");
+            //Debug.Log("fdgdfg");
             player = other.transform;
             huntPlayer = true;
+        }
+        else if (other.tag == "Bullet")
+        {
+            Destroy(other);
+            takeDmg(34);
+            mymat.color =Color.red;
+            hitTime = Time.time;
+
         }
     }
 }
