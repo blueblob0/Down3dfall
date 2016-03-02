@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class CameraMove : MonoBehaviour {
 
@@ -16,6 +17,8 @@ public class CameraMove : MonoBehaviour {
     private bool forward;
     private bool back;
     private bool mouseHeld;
+    private int playerHealth;
+    public Text healthText;
 
     private List<GameObject> bullets = new List<GameObject>();
 
@@ -50,6 +53,7 @@ public class CameraMove : MonoBehaviour {
         // Set target direction to the camera's initial orientation.
         targetDirection = transform.localRotation.eulerAngles;
         myRigid = gameObject.GetComponent<Rigidbody>();
+        healthText.text = playerHealth.ToString();
     }
 
     // Update is called once per frame
