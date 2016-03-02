@@ -53,6 +53,7 @@ public class CameraMove : MonoBehaviour {
         // Set target direction to the camera's initial orientation.
         targetDirection = transform.localRotation.eulerAngles;
         myRigid = gameObject.GetComponent<Rigidbody>();
+        playerHealth = 4;
         healthText.text = playerHealth.ToString();
     }
 
@@ -254,7 +255,13 @@ public class CameraMove : MonoBehaviour {
             DmgEnemy(other);
            // Debug.Log(myRigid.velocity);
         }
-       
+
+        if (other.tag == "Enemy")
+        {
+            Hit(other.gameObject.GetComponent<Enemy>());
+           
+        }
+
     }
    
     void Shoot()
@@ -269,6 +276,19 @@ public class CameraMove : MonoBehaviour {
 
         }
 
+
+    }
+
+
+    void Hit(Enemy e)
+    {
+        playerHealth--;
+        healthText.text = playerHealth.ToString();
+
+        if (playerHealth <= 0)
+        {
+            Application.LoadLevel(Application.loadedLevel);
+        }
 
     }
 
