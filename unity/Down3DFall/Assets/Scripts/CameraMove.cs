@@ -9,14 +9,17 @@ public class CameraMove : MonoBehaviour {
     private  float acceleration =5 ;
     private const float fallspeed = 1f;
     private const float gravity = -100f;
-    private const float bulletTime = 0.05f;
+    private const float bulletTime = 0.5f;
     private float lastBullettime =0.0f;
+    private const int dragChange = 3;
     public Vector3 velocity;
     private bool left ;
     private bool right;
     private bool forward;
     private bool back;
     private bool mouseHeld;
+
+    private bool canShoot;
     private int playerHealth;
     public Text healthText;
 
@@ -61,17 +64,28 @@ public class CameraMove : MonoBehaviour {
     void Update () {
 
         CheckButton();
-
+        Debug.Log(myRigid.velocity);
         moveCamera();
         // if you hold the mous rotate the camera
         moveDirection();
 
         if (Input.GetMouseButtonDown(0))
         {
-            Shoot();
-
+            canShoot = true;
+            myRigid.drag = dragChange;
         }
 
+        if (Input.GetMouseButtonUp(0))
+        {
+            canShoot = false;
+            myRigid.drag = 0;
+        }
+       
+
+        if (canShoot)
+        {
+            Shoot();
+        }
 
         //myRigid.AddRelativeForce(hold2);
     }
@@ -258,7 +272,7 @@ public class CameraMove : MonoBehaviour {
 
         if (other.tag == "Enemy")
         {
-            Hit(other.gameObject.GetComponent<Enemy>());
+            Hit(other.gameObject.GetComponentInParent<Enemy>());
            
         }
 
@@ -268,10 +282,14 @@ public class CameraMove : MonoBehaviour {
     {
         if(Time.time -lastBullettime > bulletTime)
         {
-            Debug.Log("sdhhot");
+            lastBullettime = Time.time;
+
+            //remove one ammo 
+
+            //Debug.Log("sdhhot");
             GameObject bullet = Instantiate(Resources.Load("Bullet", typeof(GameObject))) as GameObject;
             bullet.transform.position = transform.position;
-            bullet.GetComponent<Rigidbody>().velocity =transform.forward*100;
+            bullet.GetComponent<Rigidbody>().velocity =transform.forward*200;
             bullets.Add(bullet);
 
         }
@@ -282,11 +300,17 @@ public class CameraMove : MonoBehaviour {
 
     void Hit(Enemy e)
     {
+        if (e.dead)
+        {
+            return;
+        }
         playerHealth--;
+        
         healthText.text = playerHealth.ToString();
-
+        
         if (playerHealth <= 0)
         {
+            //Debug.LogError(e.gameObject.name);
             Application.LoadLevel(Application.loadedLevel);
         }
 

@@ -9,12 +9,14 @@ public class Enemy : MonoBehaviour {
     Transform player;
     Rigidbody enemyRig;
     Material mymat;
+    public bool dead;
     float stopDis = 0.01f;
     float hitTime = -10; //Time last hit;
     float hitDiff = 0.5f;
     	// Use this for initialization
 	protected virtual void Start ()
     {
+        dead = false;
         enemyRig = gameObject.GetComponent<Rigidbody>();
         mymat = gameObject.GetComponent<Renderer>().material;
         mymat.color = Color.white;
@@ -50,11 +52,14 @@ public class Enemy : MonoBehaviour {
     /// </summary>
     public void takeDmg(int amount)
     {
+        
         health -= amount;
-        if(health <= 0)
+      
+        if (health <= 0)
         {
-            Debug.LogError(name);
-            Destroy(gameObject); 
+            dead = true;
+             Destroy(gameObject);
+        
         }
 
 
