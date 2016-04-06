@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Enemy : MonoBehaviour {
-    int speed = 100;
+    int speed = 90;
     protected float health;
 
     bool huntPlayer;
@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour {
     Rigidbody enemyRig;
     Material mymat;
     public bool dead;
-    float stopDis = 0.01f;
+    float stopDis = 0.001f;
     float hitTime = -10; //Time last hit;
     float hitDiff = 0.5f;
     	// Use this for initialization
@@ -33,8 +33,14 @@ public class Enemy : MonoBehaviour {
             var direction = Vector3.zero;
             if (Vector3.Distance(transform.position, player.position) > stopDis)
             {
-                direction = player.position - transform.position;
-                enemyRig.AddRelativeForce(direction.normalized * speed, ForceMode.Force);
+               // direction = player.position - transform.position;
+
+
+                //enemyRig.AddForce(direction.normalized * speed, ForceMode.VelocityChange);
+               
+                     transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
+
+
             }
         }
 
@@ -75,6 +81,10 @@ public class Enemy : MonoBehaviour {
             //Debug.Log("fdgdfg");
             player = other.transform;
             huntPlayer = true;
+        }
+        if(other.tag == "MainCamera")
+        {
+            Debug.Log("MYNAMEISDOWN3SFALL");
         }
         else if (other.tag == "Bullet")
         {

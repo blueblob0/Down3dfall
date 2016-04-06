@@ -5,11 +5,11 @@ using UnityEngine.UI;
 public class CameraMove : MonoBehaviour {
 
 
-    private  float maxSpeed =2;
+    private  float maxSpeed =3;
     private  float acceleration =5 ;
     private const float fallspeed = 1f;
-    private const float gravity = -100f;
-    private const float bulletTime = 0.5f;
+    private const float gravity = -50f;
+    private const float bulletTime = 0.4f;
     private float lastBullettime =0.0f;
     private const int dragChange = 3;
     public Vector3 velocity;
@@ -64,7 +64,7 @@ public class CameraMove : MonoBehaviour {
     void Update () {
 
         CheckButton();
-        Debug.Log(myRigid.velocity);
+        //Debug.Log(myRigid.velocity);
         moveCamera();
         // if you hold the mous rotate the camera
         moveDirection();
