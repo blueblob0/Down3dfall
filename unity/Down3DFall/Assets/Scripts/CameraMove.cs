@@ -18,11 +18,16 @@ public class CameraMove : MonoBehaviour {
     private bool forward;
     private bool back;
     private bool mouseHeld;
+    private bool reload = false;
 
     private bool canShoot;
     private int playerHealth;
+    private int ammo;
+    const int maxAmmo = 8;
+    float reloadTime =1.0f;
+    float curReloadTime;
     public Text healthText;
-
+    public Text ammoText;
     private List<GameObject> bullets = new List<GameObject>();
 
 
@@ -53,10 +58,14 @@ public class CameraMove : MonoBehaviour {
         forward = false;
         back = false;
         mouseHeld = false;
+
         // Set target direction to the camera's initial orientation.
         targetDirection = transform.localRotation.eulerAngles;
         myRigid = gameObject.GetComponent<Rigidbody>();
         playerHealth = 4;
+        
+        ammo = maxAmmo;
+        ammoText.text = ammo.ToString();
         healthText.text = playerHealth.ToString();
     }
 
@@ -72,7 +81,7 @@ public class CameraMove : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             canShoot = true;
-            myRigid.drag = dragChange;
+            
         }
 
         if (Input.GetMouseButtonUp(0))
@@ -85,6 +94,16 @@ public class CameraMove : MonoBehaviour {
         if (canShoot)
         {
             Shoot();
+        }
+
+        if (reload)
+        {
+            if (curReloadTime < Time.time -reloadTime  )
+            {
+                ammo = maxAmmo;
+                ammoText.text = ammo.ToString();
+                reload = false;
+            }
         }
 
         //myRigid.AddRelativeForce(hold2);
@@ -282,15 +301,33 @@ public class CameraMove : MonoBehaviour {
     {
         if(Time.time -lastBullettime > bulletTime)
         {
-            lastBullettime = Time.time;
 
-            //remove one ammo 
+            if (ammo > 0)
+            {
+                myRigid.drag = dragChange;
+                ammo--;
+                ammoText.text = ammo.ToString();
+                lastBullettime = Time.time;
 
-            //Debug.Log("sdhhot");
-            GameObject bullet = Instantiate(Resources.Load("Bullet", typeof(GameObject))) as GameObject;
-            bullet.transform.position = transform.position;
-            bullet.GetComponent<Rigidbody>().velocity =transform.forward*200;
-            bullets.Add(bullet);
+                //remove one ammo 
+
+                //Debug.Log("sdhhot");
+                GameObject bullet = Instantiate(Resources.Load("Bullet", typeof(GameObject))) as GameObject;
+                bullet.transform.position = transform.position;
+                bullet.GetComponent<Rigidbody>().velocity = transform.forward * 200;
+                bullets.Add(bullet);
+            }
+            else if(!reload)
+            {
+
+                reload = true;
+                curReloadTime = Time.time;
+                ammoText.text = "Reloading";
+                myRigid.drag = 0;
+            }
+
+
+            
 
         }
 
