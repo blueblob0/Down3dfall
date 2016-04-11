@@ -1,0 +1,3 @@
+reloading r
+1 shot enemies 
+bounce 
