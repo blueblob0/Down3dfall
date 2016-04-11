@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour {
             // transform.position = Vector3.MoveTowards(transform.position, player.position, speed * Time.deltaTime);
             //enemyRig.MovePosition(player.position* Time.deltaTime);
 
-            var direction = Vector3.zero;
+
             if (Vector3.Distance(transform.position, player.position) > stopDis)
             {
                // direction = player.position - transform.position;
@@ -81,18 +81,15 @@ public class Enemy : MonoBehaviour {
             //Debug.Log("fdgdfg");
             player = other.transform;
             huntPlayer = true;
-        }
-        if(other.tag == "MainCamera")
-        {
-            Debug.Log("MYNAMEISDOWN3SFALL");
-        }
+        }        
         else if (other.tag == "Bullet")
         {
-            Destroy(other);
-            takeDmg(34);
+            Destroy(other.gameObject);
+            Debug.Log(other.name);
+            //takeDmg(34);
+            takeDmg(100);
             mymat.color =Color.red;
             hitTime = Time.time;
-
         }
     }
 }

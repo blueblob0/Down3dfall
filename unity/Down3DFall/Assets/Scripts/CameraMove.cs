@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CameraMove : MonoBehaviour {
 
@@ -20,6 +21,7 @@ public class CameraMove : MonoBehaviour {
     private bool mouseHeld;
     private bool reload = false;
 
+
     private bool canShoot;
     private int playerHealth;
     private int ammo;
@@ -28,6 +30,15 @@ public class CameraMove : MonoBehaviour {
     float curReloadTime;
     public Text healthText;
     public Text ammoText;
+
+    public Text fallSpeed;
+
+    private float lastPos;
+    private float speedTime;
+    public float holdSpeed;
+
+    
+
     private List<GameObject> bullets = new List<GameObject>();
 
 
@@ -58,12 +69,12 @@ public class CameraMove : MonoBehaviour {
         forward = false;
         back = false;
         mouseHeld = false;
-
+        lastPos = transform.position.y;
         // Set target direction to the camera's initial orientation.
         targetDirection = transform.localRotation.eulerAngles;
         myRigid = gameObject.GetComponent<Rigidbody>();
         playerHealth = 4;
-        
+        speedTime = Time.time;
         ammo = maxAmmo;
         ammoText.text = ammo.ToString();
         healthText.text = playerHealth.ToString();
@@ -89,12 +100,15 @@ public class CameraMove : MonoBehaviour {
             canShoot = false;
             myRigid.drag = 0;
         }
-       
-
-        if (canShoot)
+        if (Input.GetKey(KeyCode.R))
         {
-            Shoot();
+            reload = true;
+            curReloadTime = Time.time;
+            ammoText.text = "Reloading";
+            myRigid.drag = 0;
         }
+
+        
 
         if (reload)
         {
@@ -104,11 +118,29 @@ public class CameraMove : MonoBehaviour {
                 ammoText.text = ammo.ToString();
                 reload = false;
             }
+        }else if (canShoot)
+        {
+            Shoot();
         }
+        if (speedTime < Time.time - 0.1f)
+        {
+            workSpeed();
 
+        }
         //myRigid.AddRelativeForce(hold2);
     }
 
+
+    void workSpeed()
+    {
+        float hold = transform.position.y;
+       
+        float speedChange = hold - lastPos;
+        holdSpeed = -(speedChange / 0.1f);
+        fallSpeed.text = holdSpeed.ToString();
+        speedTime = Time.time;
+        lastPos = transform.position.y;
+    }
 
     void moveCamera()
     {
@@ -233,7 +265,7 @@ public class CameraMove : MonoBehaviour {
 
         // move the camera in the diurection its facing 
 
-        float hold = transform.position.y;
+
 
         Quaternion holdq = transform.localRotation;
         Quaternion holdqa = holdq;
@@ -271,13 +303,7 @@ public class CameraMove : MonoBehaviour {
         myRigid.velocity = hold2;
         //Debug.Log(myRigid.velocity);
     }
-
-
-
-
-
-   
-
+    
     void OnTriggerEnter(Collider other)
     {
         if (other.tag == "Bounce")
@@ -347,8 +373,10 @@ public class CameraMove : MonoBehaviour {
         
         if (playerHealth <= 0)
         {
-            //Debug.LogError(e.gameObject.name);
-            Application.LoadLevel(Application.loadedLevel);
+           // Debug.LogError(SceneManager.GetActiveScene().name);
+            // Application.LoadLevel(Application.loadedLevel);
+
+             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
 
     }
@@ -356,7 +384,7 @@ public class CameraMove : MonoBehaviour {
 
     void DmgEnemy(Collider other)
     {
-        other.GetComponent<Enemy>().takeDmg(100);
+        other.GetComponentInParent<Enemy>().takeDmg(100);
     }
 
     

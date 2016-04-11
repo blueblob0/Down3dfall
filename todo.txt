@@ -1,3 +1,9 @@
+To Do
+
 reloading r
+
+
+
+Done
+bounce  
 1 shot enemies 
-bounce 
