@@ -6,8 +6,8 @@ using UnityEngine.SceneManagement;
 public class CameraMove : MonoBehaviour {
 
 
-    private  float maxSpeed =3;
-    private  float acceleration =5 ;
+    private  float maxSpeed =5;
+    private  float acceleration =10 ;
     private const float fallspeed = 1f;
     private const float gravity = -50f;
     private const float bulletTime = 0.4f;

@@ -8,7 +8,7 @@ public class Enemy : MonoBehaviour {
     bool huntPlayer;
     Transform player;
     Rigidbody enemyRig;
-    Material mymat;
+    protected Material mymat;
     public bool dead;
     float stopDis = 0.001f;
     float hitTime = -10; //Time last hit;
@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour {
         dead = false;
         enemyRig = gameObject.GetComponent<Rigidbody>();
         mymat = gameObject.GetComponent<Renderer>().material;
-        mymat.color = Color.white;
+        //mymat.color = Color.white;
     }
 	
 	// Update is called once per frame
@@ -47,7 +47,7 @@ public class Enemy : MonoBehaviour {
 
         if(Time.time -hitTime >hitDiff)
         {
-            mymat.color = Color.white;
+            //mymat.color = Color.white;
 
         }
 
