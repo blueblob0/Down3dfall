@@ -76,13 +76,13 @@ public class Enemy : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             //Debug.Log("fdgdfg");
             player = other.transform;
             huntPlayer = true;
-        }        
-        else if (other.tag == "Bullet")
+        }
+        else if (other.CompareTag("Bullet")) 
         {
             Destroy(other.gameObject);
             Debug.Log(other.name);

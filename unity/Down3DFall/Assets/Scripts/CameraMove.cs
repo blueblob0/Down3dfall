@@ -321,8 +321,25 @@ public class CameraMove : MonoBehaviour {
            
         }
 
+        if (other.tag == "Updraft")
+        {
+            Physics.gravity = new Vector3(0, -gravity, 0);
+            Debug.Log(Physics.gravity);
+        }
+
     }
-   
+
+    void OnTriggerExit(Collider other)
+    {
+      
+
+        if (other.tag == "Updraft")
+        {
+            Physics.gravity = new Vector3(0, gravity, 0);
+            Debug.Log(Physics.gravity);
+        }
+
+    }
     void Shoot()
     {
         if(Time.time -lastBullettime > bulletTime)

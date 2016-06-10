@@ -5,11 +5,11 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{3F841A2E-B40C-EA1B-62B8-B95442648132}</ProjectGuid>
+	<ProjectGuid>{139D770E-0E09-7D96-A354-36021D80E54B}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
-	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<AssemblyName>Assembly-CSharp-firstpass</AssemblyName>
 	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
 	<FileAlignment>512</FileAlignment>
 	<BaseDirectory>Assets</BaseDirectory>
@@ -46,13 +46,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Example\EchoTest.cs" />
-     <Compile Include="Assets\Scripts\Bullet.cs" />
-     <Compile Include="Assets\Scripts\CameraMove.cs" />
-     <Compile Include="Assets\Scripts\Enemy.cs" />
-     <Compile Include="Assets\Scripts\Ghost.cs" />
-     <Compile Include="Assets\Scripts\Wall.cs" />
-     <Compile Include="Assets\testscript.cs" />
+     <Compile Include="Assets\Plugins\WebSocket.cs" />
      <None Include="Assets\README.txt" />
  <Reference Include="UnityEngine.UI">
  <HintPath>D:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
