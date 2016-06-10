@@ -306,6 +306,11 @@ public class CameraMove : MonoBehaviour {
     
     void OnTriggerEnter(Collider other)
     {
+        if (other.tag == "Lava")
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        }
         if (other.tag == "Bounce")
         {
              //myRigid.AddRelativeForce(-Physics.gravity,ForceMode.Acceleration);
